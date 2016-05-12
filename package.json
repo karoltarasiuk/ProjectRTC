@@ -1,14 +1,14 @@
 {
-  "name": "ProjectRTC_HTTPS",
+  "name": "ProjectRTC",
   "version": "0.4.0",
-  "author": "Karol Tarasiuk <karol.tarasiuk@learnosity.com>",
-  "description": "a webRTC live streaming server with HTTPS capabilities",
+  "author": "Pierre Chabardes <pierre@chabardes.net>",
+  "description": "a webRTC live streaming server",
   "scripts": {
     "start": "node app.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/karoltarasiuk/ProjectRTC.git"
+    "url": "https://github.com/pchab/ProjectRTC.git"
   },
   "dependencies": {
     "body-parser": "^1.12.2",
