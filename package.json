@@ -4,8 +4,7 @@
   "author": "Karol Tarasiuk <karol.tarasiuk@learnosity.com>",
   "description": "a webRTC live streaming server with HTTPS capabilities",
   "scripts": {
-    "start": "forever start app.js",
-    "stop": "forever stopall"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
