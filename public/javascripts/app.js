@@ -10,6 +10,7 @@
 			optional: []
         }
     };
+    var remoteStreams;
 
     app.factory('camera', ['$rootScope', '$window', function($rootScope, $window){
     	var camera = {};
@@ -47,14 +48,15 @@
 		return camera;
     }]);
 
-	app.controller('RemoteStreamsController', ['camera', '$location', '$http', function(camera, $location, $http){
+	app.controller('RemoteStreamsController', ['camera', '$location', '$http', '$scope', function(camera, $location, $http, $scope){
 		var rtc = this;
-		rtc.remoteStreams = [];
+		remoteStreams = rtc.remoteStreams = [];
 		function getStreamById(id) {
 		    for(var i=0; i<rtc.remoteStreams.length;i++) {
 		    	if (rtc.remoteStreams[i].id === id) {return rtc.remoteStreams[i];}
 		    }
 		}
+
 		rtc.loadData = function () {
 			// get list of streams from the server
 			$http.get('/streams.json').success(function(data){
@@ -130,8 +132,16 @@
 		});
 
         $scope.sendMessage = function () {
-            client.sendThroughDataChannel(localStream.message);
-            localStream.message = '';
+            var stream;
+            for (var i = 0; i < remoteStreams.length; i++) {
+                if (remoteStreams[i].isPlaying) {
+                    stream = remoteStreams[i];
+                }
+            }
+            if (stream) {
+                client.sendThroughDataChannel(stream.id, localStream.message);
+                localStream.message = '';
+            }
         };
 
 		localStream.toggleCam = function(){
@@ -161,9 +171,9 @@
 			}
 		};
 	}]);
-	
+
 	app.controller('ControlController', ['$scope', function($scope){
-		
+
 		$scope.sendControls = function(command){
 			console.log('Sending control command: ' + command);
 		}

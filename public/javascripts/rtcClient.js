@@ -10,7 +10,10 @@ var PeerManager = (function () {
         },
         peerConnectionConstraints: {
           optional: [
-            {"DtlsSrtpKeyAgreement": true}
+            {
+                "DtlsSrtpKeyAgreement": true,
+                "RtpDataChannels": true
+            }
           ]
         }
       },
@@ -25,7 +28,8 @@ var PeerManager = (function () {
   });
 
   function addPeer(remoteId) {
-    var peer = new Peer(config.peerConnectionConfig, config.peerConnectionConstraints);
+    console.log('Adding peer ' + remoteId);
+    var peer = new Peer(/*config.peerConnectionConfig, config.peerConnectionConstraints*/);
     peer.pc.onicecandidate = function(event) {
       if (event.candidate) {
         send('candidate', remoteId, {
@@ -80,8 +84,10 @@ var PeerManager = (function () {
   function handleMessage(message) {
     var type = message.type,
         from = message.from,
-        pc = (peerDatabase[from] || addPeer(from)).pc;
+        peer = (peerDatabase[from] || addPeer(from)),
+        pc = peer.pc;
 
+    console.log(peer);
     console.log('received ' + type + ' from ' + from);
 
     switch (type) {
@@ -161,31 +167,24 @@ var PeerManager = (function () {
     },
 
     send: function(type, payload) {
-      socket.emit(type, payload);
+        socket.emit(type, payload);
     },
 
-    sendThroughDataChannel: function(message) {
-        peer = peerDatabase[localStream.id] || addPeer(localStream.id);
-        console.log('Sending message through data channel: ' + message);
-        peer.dataChannel.send(message);
-    }
+    sendThroughDataChannel: function(remoteId, message) {
+        socket.emit('message', {
+            to: remoteId,
+            type: 'data',
+            payload: {
+                msg: message
+            }
+        });
+    },
   };
 
 });
 
 var Peer = function (pcConfig, pcConstraints) {
     this.pc = new RTCPeerConnection(pcConfig, pcConstraints);
-
-    function handleSendChannelStatusChange (event) {
-        console.log('State has changed: ' + event);
-        console.log(this.dataChannel);
-    }
-
-    this.dataChannel = this.pc.createDataChannel('dataChannel');
-    this.dataChannel.onopen = handleSendChannelStatusChange;
-    this.dataChannel.onclose = handleSendChannelStatusChange;
-    console.log(this.dataChannel);
-
     this.remoteVideoEl = document.createElement('video');
     this.remoteVideoEl.controls = true;
     this.remoteVideoEl.autoplay = true;
