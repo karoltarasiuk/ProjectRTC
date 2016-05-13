@@ -29,9 +29,11 @@
     		return new Promise(function(resolve, reject){
 				try {
 					//camera.stream.stop() no longer works
-          for( var track in camera.stream.getTracks() ){
-            track.stop();
-          }
+					var tracks = camera.stream.getTracks();
+
+					for( var i = 0, l = tracks.length; i < l; i++ ) {
+						tracks[i].stop();
+					}
 					camera.preview.src = '';
 					resolve();
 				} catch(error) {
@@ -145,7 +147,9 @@
 			} else {
 				camera.start()
 				.then(function(result) {
-					localStream.link = $window.location.host + '/' + client.getId();
+					$scope.$apply(function(){
+						localStream.link = $window.location.host + '/' + client.getId();
+					});
 					client.send('readyToStream', { name: localStream.name });
 				})
 				.catch(function(err) {
