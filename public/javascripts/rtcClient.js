@@ -168,7 +168,7 @@ var PeerManager = (function () {
         peer = peerDatabase[localStream.id] || addPeer(localStream.id);
         console.log('Sending message through data channel: ' + message);
         peer.dataChannel.send(message);
-    },
+    }
   };
 
 });

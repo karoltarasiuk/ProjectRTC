@@ -13,5 +13,9 @@
 		<a>{{ localStream.link }}</a>
 	</div>
 	<span class="label label-warning">{{ localStream.error }}</span>
-    <p>Type a message: <input ng-model="localStream.message"/> <button ng-click="sendMessage()">Send</button></p>
+	<div class="form-group">
+		<label for="usr">Type a message:</label>
+		<input ng-model="localStream.message" type="text" class="form-control" style="width: 83%; float: left;" id="usr">
+		<button type="button" class="btn btn-default col-md-2" ng-click="sendMessage()" style="float:right;">Send</button>
+	</div>
 </div>
