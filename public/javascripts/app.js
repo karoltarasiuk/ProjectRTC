@@ -131,19 +131,6 @@
 		    });
 		});
 
-        $scope.sendMessage = function () {
-            var stream;
-            for (var i = 0; i < remoteStreams.length; i++) {
-                if (remoteStreams[i].isPlaying) {
-                    stream = remoteStreams[i];
-                }
-            }
-            if (stream) {
-                client.sendThroughDataChannel(stream.id, localStream.message);
-                localStream.message = '';
-            }
-        };
-
 		localStream.toggleCam = function(){
 			if(localStream.cameraIsOn){
 				camera.stop()
@@ -173,9 +160,19 @@
 	}]);
 
 	app.controller('ControlController', ['$scope', function($scope){
+		
+		$scope.sendMessage = function (message) {
+			var stream;
+			for (var i = 0; i < remoteStreams.length; i++) {
+				if (remoteStreams[i].isPlaying) {
+					stream = remoteStreams[i];
+				}
+			}
+			if (stream) {
+				client.sendThroughDataChannel(stream.id, message);
+			}
+			console.log('Sending: ' + message);
+		};
 
-		$scope.sendControls = function(command){
-			console.log('Sending control command: ' + command);
-		}
 	}]);
 })();
