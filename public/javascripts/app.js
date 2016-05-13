@@ -17,7 +17,7 @@
 
     	camera.start = function(){
 			return requestUserMedia(mediaConfig)
-			.then(function(stream){			
+			.then(function(stream){
 				attachMediaStream(camera.preview, stream);
 				client.setLocalStream(stream);
 				camera.stream = stream;
@@ -26,7 +26,7 @@
 			.catch(Error('Failed to get access to local media.'));
 		};
     	camera.stop = function(){
-    		return new Promise(function(resolve, reject){			
+    		return new Promise(function(resolve, reject){
 				try {
 					//camera.stream.stop() no longer works
           for( var track in camera.stream.getTracks() ){
@@ -40,7 +40,7 @@
     		})
     		.then(function(result){
     			$rootScope.$broadcast('cameraIsOn',false);
-    		});	
+    		});
 		};
 		return camera;
     }]);
@@ -75,8 +75,8 @@
 			stream.isPlaying = !stream.isPlaying;
 		};
 		rtc.call = function(stream){
-			/* If json isn't loaded yet, construct a new stream 
-			 * This happens when you load <serverUrl>/<socketId> : 
+			/* If json isn't loaded yet, construct a new stream
+			 * This happens when you load <serverUrl>/<socketId> :
 			 * it calls socketId immediatly.
 			**/
 			if(!stream.id){
@@ -126,6 +126,11 @@
 		    	localStream.cameraIsOn = data;
 		    });
 		});
+
+        $scope.sendMessage = function () {
+            client.sendThroughDataChannel(localStream.message);
+            localStream.message = '';
+        };
 
 		localStream.toggleCam = function(){
 			if(localStream.cameraIsOn){

@@ -18,12 +18,12 @@ var PeerManager = (function () {
       localStream,
       remoteVideoContainer = document.getElementById('remoteVideosContainer'),
       socket = io();
-      
+
   socket.on('message', handleMessage);
   socket.on('id', function(id) {
     localId = id;
   });
-      
+
   function addPeer(remoteId) {
     var peer = new Peer(config.peerConnectionConfig, config.peerConnectionConstraints);
     peer.pc.onicecandidate = function(event) {
@@ -54,7 +54,7 @@ var PeerManager = (function () {
       }
     };
     peerDatabase[remoteId] = peer;
-        
+
     return peer;
   }
   function answer(remoteId) {
@@ -63,7 +63,7 @@ var PeerManager = (function () {
       function(sessionDescription) {
         pc.setLocalDescription(sessionDescription);
         send('answer', remoteId, sessionDescription);
-      }, 
+      },
       error
     );
   }
@@ -73,7 +73,7 @@ var PeerManager = (function () {
       function(sessionDescription) {
         pc.setLocalDescription(sessionDescription);
         send('offer', remoteId, sessionDescription);
-      }, 
+      },
       error
     );
   }
@@ -83,7 +83,7 @@ var PeerManager = (function () {
         pc = (peerDatabase[from] || addPeer(from)).pc;
 
     console.log('received ' + type + ' from ' + from);
-  
+
     switch (type) {
       case 'init':
         toggleLocalStream(pc);
@@ -129,7 +129,7 @@ var PeerManager = (function () {
     getId: function() {
       return localId;
     },
-    
+
     setLocalStream: function(stream) {
 
       // if local cam has been stopped, remove it from all outgoing streams.
@@ -144,13 +144,13 @@ var PeerManager = (function () {
       }
 
       localStream = stream;
-    }, 
+    },
 
     toggleLocalStream: function(remoteId) {
       peer = peerDatabase[remoteId] || addPeer(remoteId);
       toggleLocalStream(peer.pc);
     },
-    
+
     peerInit: function(remoteId) {
       peer = peerDatabase[remoteId] || addPeer(remoteId);
       send('init', remoteId, null);
@@ -162,14 +162,31 @@ var PeerManager = (function () {
 
     send: function(type, payload) {
       socket.emit(type, payload);
-    }
+    },
+
+    sendThroughDataChannel: function(message) {
+        peer = peerDatabase[localStream.id] || addPeer(localStream.id);
+        console.log('Sending message through data channel: ' + message);
+        peer.dataChannel.send(message);
+    },
   };
-  
+
 });
 
 var Peer = function (pcConfig, pcConstraints) {
-  this.pc = new RTCPeerConnection(pcConfig, pcConstraints);
-  this.remoteVideoEl = document.createElement('video');
-  this.remoteVideoEl.controls = true;
-  this.remoteVideoEl.autoplay = true;
-}
+    this.pc = new RTCPeerConnection(pcConfig, pcConstraints);
+
+    function handleSendChannelStatusChange (event) {
+        console.log('State has changed: ' + event);
+        console.log(this.dataChannel);
+    }
+
+    this.dataChannel = this.pc.createDataChannel('dataChannel');
+    this.dataChannel.onopen = handleSendChannelStatusChange;
+    this.dataChannel.onclose = handleSendChannelStatusChange;
+    console.log(this.dataChannel);
+
+    this.remoteVideoEl = document.createElement('video');
+    this.remoteVideoEl.controls = true;
+    this.remoteVideoEl.autoplay = true;
+};
