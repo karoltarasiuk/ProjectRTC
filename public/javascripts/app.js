@@ -145,8 +145,18 @@
 				})
 				.catch(function(err) {
 					console.log(err);
+					$scope.$apply(function(){
+						localStream.error = err.message;
+					});
 				});
 			}
 		};
+	}]);
+	
+	app.controller('ControlController', ['$scope', function($scope){
+		
+		$scope.sendControls = function(command){
+			console.log('Sending control command: ' + command);
+		}
 	}]);
 })();

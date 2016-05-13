@@ -1,11 +1,18 @@
 <div class="localStream" ng-controller="LocalStreamController as localStream">
-	<p><%= username %>: <input ng-model="localStream.name"/></p>
+	<h2>Local Stream</h2>
+
+	<div class="form-group">
+		<label for="usr">Name:</label>
+		<input ng-model="localStream.name" type="text" class="form-control" id="usr">
+	</div>
+
 	<video id="localVideo" muted="muted" autoplay="true"></video>
-	<li ng-click="localStream.toggleCam()">
-		<a href>{{ localStream.cameraIsOn ? 'Stop' : 'Start' }}</a>
-	</li>
-	<div ng-show="localStream.cameraIsOn">		
+	<button style="width: 100%;" type="button" ng-click="localStream.toggleCam()" class="btn btn-default row col-md-4">{{ localStream.cameraIsOn ? 'Stop Camera' : 'Start Camera' }}</button>
+
+	<div ng-show="localStream.cameraIsOn">
 		<p><%= share %>:</p>
 		<a>{{ localStream.link }}</a>
 	</div>
+	<span class="label label-warning">{{ localStream.error }}</span>
+
 </div>

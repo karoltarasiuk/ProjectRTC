@@ -1,0 +1,17 @@
+
+<div class="controls" style="margin-top: 10px;" ng-controller="ControlController">
+    <h2>Control Panel</h2>
+
+    <div class="row">
+        <button type="button" ng-click="sendControls('FORWARD')" class="btn btn-default row col-md-4 col-md-offset-4">Forward</button>
+    </div>
+    <div class="row">
+        <button type="button" ng-click="sendControls('TURN LEFT')" class="btn btn-default col-md-4">Left</button>
+        <button type="button" class="btn btn-danger col-md-4">KILL</button>
+        <button type="button" ng-click="sendControls('TURN RIGHT')" class="btn btn-default col-md-4 col-md-offset-0">Right</button>
+    </div>
+    <div class="row">
+        <button type="button" ng-click="sendControls('BACKWARD')" class="btn btn-default col-md-4 col-md-offset-4">Backward</button>
+    </div>
+
+</div>
